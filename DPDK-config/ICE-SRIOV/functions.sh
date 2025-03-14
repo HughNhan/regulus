@@ -157,6 +157,9 @@ hn_exit() {
 }
 
 function prompt_continue {
+    if [ "${SINGLE_STEP}" != "true" ]; then
+        return
+    fi
     printf 'Continue next step (y/n)? '
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then 

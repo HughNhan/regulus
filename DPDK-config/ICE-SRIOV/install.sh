@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PAUSE=${PAUSE:-false}
+SINGLE_STEP=${SINGLE_STEP:-false}
 
 if [ $PAUSE == true ]; then
   echo true PAUSE=$PAUSE

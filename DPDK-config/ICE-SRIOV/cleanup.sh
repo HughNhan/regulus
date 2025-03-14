@@ -1,8 +1,11 @@
 #!/bin/bash
 
+SINGLE_STEP=${SINGLE_STEP:-false}
+
 #set -euo pipefail
 source ./setting.env
 source ../functions.sh
+
 
 parse_args $@
 
@@ -30,7 +33,7 @@ if oc get SriovNetworkNodePolicy $DIR-sriov-node-policy -n openshift-sriov-netwo
     echo "remove SriovNetworkNodePolicy ..."
     RUN_CMD oc delete  SriovNetworkNodePolicy $DIR-sriov-node-policy -n openshift-sriov-network-operator
     echo "remove SriovNetworkNodePolicy: done"
-    //wait_mcp
+    #wait_mcp
     # !!!! reboot !!!!
 
 else
