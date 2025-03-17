@@ -53,14 +53,22 @@ query_pci_by_interface() {
         return 1
     fi
 }
-pcidevices=()
-pcidevices+=("$(query_pci_by_interface "${device_info}" "$REG_DPDK_NIC_1")")
-pcidevices+=("$(query_pci_by_interface "${device_info}" "$REG_DPDK_NIC_2")")
-pcidevices="$(IFS=,; printf "%s" "${pcidevices[*]}")" # Join array elements with a comma 
-#
-TREX_ACTIVE_DEVICES_PCI=$pcidevices
+pci1=("$(query_pci_by_interface "${device_info}" "$REG_DPDK_NIC_1")")
+pci2=("$(query_pci_by_interface "${device_info}" "$REG_DPDK_NIC_2")")
+TREX_ACTIVE_DEVICES_PCI="$pci1,$pci2"
 TREX_DEVICES_PCI=$TREX_ACTIVE_DEVICES_PCI
-SERVER_DEVICES="VAR:PCIDEVICE_OPENSHIFT_IO_INTELNIC_EAST,VAR:PCIDEVICE_OPENSHIFT_IO_INTELNIC_WEST"
+case "${REG_DPDK_NIC_MODEL}" in
+    X710|XXV710|E810)
+        SERVER_DEVICES="VAR:PCIDEVICE_OPENSHIFT_IO_INTELNIC_EAST,VAR:PCIDEVICE_OPENSHIFT_IO_INTELNIC_WEST"
+        ;;
+    MLX6)
+        SERVER_DEVICES="VAR:PCIDEVICE_OPENSHIFT_IO_MLXNIC_EAST,VAR:PCIDEVICE_OPENSHIFT_IO_MLXNIC_WEST"
+        ;;
+    *)
+        echo "Unsupport NIC $REG_DPDK_NIC_MODEL"
+        exit 1
+        ;;
+esac
 
 # Update mv-params. Pita. W/o those ":space:", it failed.
 sed -i -e "s/\"arg\": \"trex-active-devices\",[[:space:]]*\"vals\": \[ \"[^\"]*\" \],[[:space:]]*/\"arg\": \"trex-active-devices\", \"vals\": [ \"$TREX_ACTIVE_DEVICES_PCI\" ],/" \
