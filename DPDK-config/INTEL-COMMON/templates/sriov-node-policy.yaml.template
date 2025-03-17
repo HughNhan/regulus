@@ -2,16 +2,16 @@
 apiVersion: sriovnetwork.openshift.io/v1
 kind: SriovNetworkNodePolicy
 metadata:
-  name: east-sriov-node-policy 
+  name: $DIR-sriov-node-policy 
   namespace: openshift-sriov-network-operator
 spec:
   deviceType: vfio-pci
   nicSelector:
     pfNames:
-    - ens6f0
+    - ${INTERFACE}
   nodeSelector:
-    node-role.kubernetes.io/customcnf: "" 
+    node-role.kubernetes.io/$MCP: "" 
   numVfs: 1 
-  mtu: 9000
+  mtu: ${SRIOV_MTU}
   priority: 5
-  resourceName: intelnic_east
+  resourceName: intelnic_$DIR
